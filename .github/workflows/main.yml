@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
 
 jobs:
+  # Bloque 1: Pruebas Unitarias
   build-and-test:
     runs-on: ubuntu-latest
     steps:
@@ -25,6 +26,7 @@ jobs:
         run: |
           python test_app.py
 
+  # Bloque 2: Empaquetado y subida a Docker Hub
   build-and-push-docker:
     needs: build-and-test
     runs-on: ubuntu-latest
@@ -45,12 +47,12 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/hola-mundo-devops:latest
 
+  # Bloque 3: Despliegue en Producción
   deploy:
     needs: build-and-push-docker
     runs-on: ubuntu-latest
     steps:
       - name: Desplegar en Render
-        # Este paso es un ejemplo simple usando un Webhook de Render
         run: |
-          echo "Desplegando en producción..."
-          # Aquí se pondría el comando 'curl' del Deploy Hook de Render
+          echo "Notificando a Render para el despliegue..."
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
